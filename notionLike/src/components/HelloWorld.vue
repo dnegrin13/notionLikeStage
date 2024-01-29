@@ -7,22 +7,22 @@ type Item = {
     message: string;
     id: number;
     component: NotionLike ;
+    level: number;
 }
 defineProps<{ msg: string }>()
 const id = ref(0)
 const items = ref < Item []>([
-  {message: 'Vive', id: id.value++, component: TextComponent}, 
-  {message: 'League of', id: id.value++, component: TextComponent}, 
-  {message: 'legend', id: id.value++, component: TextComponent}
+  {message: 'Vive', id: id.value++, component: TextComponent, level: 0}, 
+  {message: 'League of', id: id.value++, component: TextComponent, level: 0}, 
+  {message: 'legend', id: id.value++, component: TextComponent, level: 0}
 ])
 const selectActive = ref(false)
  function ajouter() {
-  items.value.push({message : text.value, id: id.value++, component: TextComponent})
+  items.value.push({message : text.value, id: id.value++, component: TextComponent, level: 0})
   text.value = ""
  }
- function supprimer(item: Item) {
-  const index = items.value.indexOf(item)
-  items.value.splice(index, 1)
+ function supprimer(i: number) {
+  items.value.splice(i, 1)
  }
  function transformer() {
   //item.component = Titre1Component
@@ -38,19 +38,29 @@ const selectActive = ref(false)
       selected.value = null
     }
   })
+  function ligne (i: number, component: NotionLike, level: number) {
+    const item = {message : "", id: id.value++, component, level}
+    items.value.splice(i + 1, 0, item)
+    selected.value = item
+  }
 </script>
 
 <template>
 <div>
   
   <div class="border">
-    <Line v-for="item in items" :key="item.id" 
+    <Line :style="{
+      marginLeft: (item.level * 16) + 'px'
+    }" 
+    v-for="(item, i) in items" 
+    :key="item.id" 
     class="line"
     v-model="item.message" 
-    @supprimer="supprimer(item)" 
+    @supprimer="supprimer(i)"
     @modifier="select(item)" 
-    @deselectionner="selected = null" 
-    @transformer="transformer" 
+    @deselectionner="ligne(i, item.component, item.level)" 
+    @transformer="transformer"
+    @indenter="item.level++" 
     :selected="selected == item"
     :dataID="item.id" 
     v-model:component="item.component"
