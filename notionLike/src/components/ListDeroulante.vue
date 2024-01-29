@@ -8,7 +8,7 @@
 
 <template>
 <div>
-    <button @click="ToggleActive">Menu déroulant</button>
+    <button @click="ToggleActive"><v-icon fill="blue" name="bi-arrow-right-short" alt="Menu déroulant" /></button>
     <div id="MenuContainer" :class="{MenuActive}">
         <slot class="position"></slot>
     </div>

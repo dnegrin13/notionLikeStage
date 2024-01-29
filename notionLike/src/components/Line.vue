@@ -8,7 +8,7 @@ import Titre3Component from './Titre3Component.vue';
 import ListApuce from './ListApuce.vue'
 import { ref,  watchPostEffect } from 'vue';
 const props = defineProps(['modelValue', 'selected', 'component', 'dataID'])
-const emit = defineEmits(['update:modelValue', 'update:component', 'supprimer', 'transformer', 'modifier', 'deselectionner', 'indenter'])
+const emit = defineEmits(['update:modelValue', 'update:component', 'supprimer', 'modifier', 'deselectionner', 'indenter'])
 const inputRef = ref < HTMLInputElement > ()
 function update(e: Event) {
     emit('update:modelValue', (e.target as HTMLInputElement).value)
@@ -33,7 +33,7 @@ watchPostEffect( () => {
 </script>
 
 <template>
-<div>
+<div class="item">
     <ListDeroulante>
         <ul id="selectComponent">
             <li><button @click="updateComponent (TextComponent)">Texte</button></li>
@@ -43,22 +43,27 @@ watchPostEffect( () => {
             <li><button @click="updateComponent (ListApuce)">Liste a puce</button></li>
         </ul>
     </ListDeroulante>
-    <input :value="props.modelValue"
+    <input class="textContainer" :value="props.modelValue"
     ref = "inputRef" 
     @input="update" 
     :data-id="props.dataID" 
     @keyup.enter="emit('deselectionner')"
     v-if="props.selected" />
     <template v-else>
-        <component @click="emit('modifier')" :is="props.component">{{ props.modelValue }}</component>
-        <button @click="emit('supprimer')">Supprimer élément de la liste</button>
-        <button @click="emit('transformer')">Transformer élément de la liste</button>
+        <component class="textContainer" @click="emit('modifier')" :is="props.component">{{ props.modelValue }}</component>
+        <button @click="emit('supprimer')"><v-icon fill="blue" name="bi-trash" alt="Supprimer élément de la liste" /></button>
     </template>
 </div>
 </template>
 
-<style>
+<style scoped>
 #selectComponent {
     list-style: none;
+}
+.item{
+    display: flex;
+}
+.textContainer {
+    flex-grow: 1;
 }
 </style>
