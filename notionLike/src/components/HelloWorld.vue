@@ -38,13 +38,42 @@ const items = ref < Item []>([
     items.value.splice(i + 1, 0, item)
     selected.value = item
   }
+  function desindenter (item: Item) {
+    if(item.level > 0) {item.level--}
+  }
+  function dragstart_handler(e: DragEvent & {dataTransfer: DataTransfer}, item: Item) {
+    console.log("dragstart_handler");
+    e.dataTransfer.setData('text/plain', item.id.toString());
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  function drop_handler(e: DragEvent & {dataTransfer: DataTransfer}, newindex: number) {
+    console.log("drop_handler")
+    const id = parseInt(e.dataTransfer.getData('text/plain'))
+    const index = items.value.findIndex((item) => item.id == id)
+    const item = items.value.splice(index, 1)
+    if(index < newindex){
+      newindex--;
+    }
+    items.value.splice(newindex + 1, 0, ...item)
+  }
+  function preventDefault(e: DragEvent) {
+    e.preventDefault()
+  }
+  type dropEvent = DragEvent & {dataTransfer: DataTransfer};
 </script>
 
 <template>
 <div id="page">
   
   <div class="border">
-    <Line :style="{
+    <div @drop="(e) => drop_handler (e as dropEvent, -1)"
+    @dragover="preventDefault"
+    @dragenter="preventDefault"
+     class="line">regege</div>
+    <Line 
+    @lacher="(e) => drop_handler (e, i)"
+    @deplacer="(e) => dragstart_handler (e, item)" 
+    :style="{
       marginLeft: (item.level * 16) + 'px'
     }" 
     v-for="(item, i) in items" 
@@ -55,6 +84,7 @@ const items = ref < Item []>([
     @modifier="select(item)" 
     @deselectionner="ligne(i, item.component, item.level)" 
     @indenter="item.level++" 
+    @desindenter="desindenter(item)" 
     :selected="selected == item"
     :dataID="item.id" 
     v-model:component="item.component"
