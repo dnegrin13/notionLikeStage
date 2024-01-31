@@ -76,53 +76,49 @@ function dropHandler(e: DragEvent & { dataTransfer: DataTransfer }, newindex: nu
     if (index < newindex) {
         newindex--;
     }
-    items.value.splice(newindex + 1, 0, ...item);
+    items.value.splice(newindex + 1, 0, ...item)
+  }
+  function dragenter_handler (e: DragEvent) {
+  (e.currentTarget as HTMLDivElement).classList.add("dragover");
 }
 document.addEventListener("mousedown", (e: MouseEvent) => {
     if (selected && (e.target as HTMLElement).getAttribute("data-id") != selected.value?.id.toString()) {
         selected.value = null;
     }
 });
-function dragenter_handler (e: DragEvent) {
-  (e.currentTarget as HTMLDivElement).classList.add("dragover");
-}
-
 </script>
 
 <template>
-    <div id="page">
-        <div class="border" :class="{ dragging }">
-            <div class="line"
-                @dragover.prevent
-                @dragenter.prevent="dragenter_handler"
-                @drop="(e) => dropHandler(e as DropEvent, -1)"
-            >
-                regege
-            </div>
-            <Line class="line"
-                v-model="item.message"
-                v-model:component="item.component"
-                v-for="(item, i) in items"
-                :key="item.id"
-                :style="{
-                    marginLeft: (item.level * 16) + 'px'
-                }"
-                :selected="selected == item"
-                :dataID="item.id"
-                @lacher="(e) => dropHandler(e, i)"
-                @deplacer="(e) => dragstartHandler(e, item)"
-                @supprimer="supprimer(i)"
-                @modifier="select(item)"
-                @deselectionner="ligne(i, item.component, item.level)"
-                @indenter="item.level++"
-                @desindenter="desindenter(item)"
-            />
-        </div>
-        <input type="text" v-model="text" @keyup.enter="ajouter">
-        <button @click="ajouter">
-            <v-icon fill="white" name="ri-add-fill" alt="Ajouter élément à la liste" />
-        </button>
-    </div>
+<div id="page">
+  
+  <div class="border">
+    <div @drop="(e) => dropHandler (e as DropEvent, -1)"
+      @dragover.prevent
+      @dragenter.prevent="dragenter_handler"
+     class="line">regege</div>
+    <Line 
+    @lacher="(e) => dropHandler (e, i)"
+    @deplacer="(e) => dragstartHandler (e, item)" 
+    :style="{
+      marginLeft: (item.level * 16) + 'px'
+    }" 
+    v-for="(item, i) in items" 
+    :key="item.id" 
+    class="line"
+    v-model="item.message" 
+    @supprimer="supprimer(i)"
+    @modifier="select(item)" 
+    @deselectionner="ligne(i, item.component, item.level)" 
+    @indenter="item.level++" 
+    @desindenter="desindenter(item)" 
+    :selected="selected == item"
+    :dataID="item.id" 
+    v-model:component="item.component"
+    />
+  </div>
+  <input @keyup.enter="ajouter" v-model="text" type="text">
+  <button @click="ajouter"><v-icon fill="white" name="ri-add-fill" alt="Ajouter élément à la liste" /></button>
+</div>
 </template>
 
 <style scoped>
