@@ -4,6 +4,11 @@
     function ToggleActive() {
         MenuActive.value = !MenuActive.value
     }
+    document.addEventListener("mousedown", (e: MouseEvent) => {
+        if((e.target as HTMLElement).closest("#MenuContainer")) 
+            return
+        MenuActive.value = false
+    })
 </script>
 
 <template>
